@@ -36,7 +36,7 @@ export const handleLogin = async (req, res) => {
 
 /////////// saving accessToken & sending response
             res.cookie('jwt', refreshToken, {httpOnly: 'true', maxAge: 16*60*60*1000, sameSite:'None'});
-            console.log('after set cookie')
+
             res.json({accessToken, refreshToken, userId: foundUser.id, message: 'Successfully', clientMessage: 'Приветствуем!'})
         } else {
             return res.status(400).json({message: 'wrong data during login', clientMessage: 'Не верные данные при авторизации'});
