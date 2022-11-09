@@ -21,9 +21,16 @@ import https from 'https'
 import { notesRouter } from './routes/note.route.js';
 import { Server } from 'socket.io';
 
-const privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
-const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
 
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+
+const __dirname = path.dirname(__filename);
+
+const privateKey  = fs.readFileSync(__dirname + '/ssl/server.key', 'utf8');
+const certificate = fs.readFileSync(__dirname + '/ssl/server.crt', 'utf8');
 const app = express();
 
 
