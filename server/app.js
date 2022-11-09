@@ -1,5 +1,5 @@
 import async_hooks from 'node:async_hooks';
-
+import fs from 'fs'
 import express from 'express';
 import config from 'config';
 import mongoose from 'mongoose';
@@ -17,10 +17,12 @@ import { logoutRouter } from './routes/logout.route.js';
 import { corsOptions } from '../config/corsOptions.js';
 import { credentials } from './middleware/credentials.js';
 import { newOrderRouter } from './routes/order.route.js';
-import http from 'http'
+import https from 'https'
 import { notesRouter } from './routes/note.route.js';
 import { Server } from 'socket.io';
 
+const privateKey  = fs.readFileSync('ssl/server.key', 'utf8');
+const certificate = fs.readFileSync('ssl/server.crt', 'utf8');
 
 const app = express();
 
@@ -54,7 +56,8 @@ app.use('/api/notes/', notesRouter)
 
 
 // create server for socket.io integretion
-const server = http.createServer(app);
+const sslCrt = {key: privateKey, cert: certificate}
+const server = https.createServer(sslCrt, app);
 const io = new Server(server)
 
 io.on('connection', (socket) => {
