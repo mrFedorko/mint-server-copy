@@ -5,7 +5,7 @@ import config from 'config';
 
 function connectDb(dbConnection){
 
-    if (config.get('mode') !== dev){
+    if (config.get('mode') !== "dev"){
         dbConnection();
     } else{
         const conf = {
