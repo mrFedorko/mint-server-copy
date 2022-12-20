@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { handleGetNotes } from '../controllers/noteController.js';
+import { handleDeleteNote, handleGetNotes, handleLikeNote, handleRecentNote, handleSendNote } from '../controllers/noteController.js';
 
 const notesRouter = Router();
 
@@ -8,5 +8,24 @@ notesRouter.get(
     handleGetNotes
 );
 
+notesRouter.post(
+    '/post/:id',
+    handleSendNote
+)
+
+notesRouter.post(
+    '/update/like/:id/:target',
+    handleLikeNote
+)
+
+notesRouter.post(
+    '/update/delete/:id/:target',
+    handleDeleteNote
+)
+
+notesRouter.post(
+    '/update/recent/:id/:target',
+    handleRecentNote
+)
 
 export {notesRouter}

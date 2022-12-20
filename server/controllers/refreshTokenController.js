@@ -4,9 +4,8 @@ import User from '../models/User.js';
 
 export const handleRefreshToken = async (req, res) => {
     const cookies = req.cookies;
-    console.log(cookies)
+
     if(!cookies?.jwt) {
-        console.log('couldnt get cookie')
         return res.sendStatus(401)
     };
     const refreshToken = cookies.jwt;

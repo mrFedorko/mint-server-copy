@@ -4,7 +4,7 @@ const documentSchema = new Schema({
     name: {type: String},
     docType: {type: String},
     numbering: {type: String},
-    expDate: {type: String},
+    fromDate: {type: String},
     link: {type: String},
 });
 

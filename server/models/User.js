@@ -6,6 +6,8 @@ import { Schema, model, Types } from 'mongoose';
 const userSchema = new Schema({
     
     email:{type: String, required: true, unique: true},
+    verificationKey: String,
+    verified:{type:Boolean, default: false },
     password:{type: String, required: true},
     refreshToken: {type: String, default: ''},
 
@@ -21,11 +23,9 @@ const userSchema = new Schema({
         corCheck: {type: String, default: ''},
         bank: {type: String, default: ''},
         BIK: {type: String, default: ''},
-
     },
 
-    notes:{type: Array, default: [{message :'Поздравляем с регистрацией на нашем сайте! При возникновении проблем, вы можете обратиться в поддержку по общему телефону или в live-чате в разделе "Помощь"', time: Date.now()},]},
-
+    notes:[{type: Types.ObjectId, ref: 'Note'}],
     orders: [{type: Types.ObjectId, ref: 'Order'}],
  
 });

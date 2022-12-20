@@ -1,3 +1,4 @@
+
 import async_hooks from 'node:async_hooks';
 import fs from 'fs'
 import express from 'express';
@@ -17,22 +18,26 @@ import { logoutRouter } from './routes/logout.route.js';
 import { corsOptions } from '../config/corsOptions.js';
 import { credentials } from './middleware/credentials.js';
 import { newOrderRouter } from './routes/order.route.js';
-import https from 'https'
+import https from 'https';
+import http from 'http'
 import { notesRouter } from './routes/note.route.js';
-import { Server } from 'socket.io';
-
+import { WebSocketServer } from 'ws';
 
 import path from 'path';
 import { fileURLToPath } from 'url';
+import { handleChat } from './ws.js';
+import { chatMessageRouter } from './routes/chat.route.js';
+import { casesRouter } from './routes/cases.route.js';
+import { verifyRouter } from './routes/verify.route.js';
 
 const __filename = fileURLToPath(import.meta.url);
 
 const __dirname = path.dirname(__filename);
 
-const privateKey  = fs.readFileSync(__dirname + '/ssl/server.key', 'utf8');
-const certificate = fs.readFileSync(__dirname + '/ssl/server.crt', 'utf8');
-const app = express();
+const privateKey  = fs.readFileSync(__dirname + '/ssl/key.pem', 'utf8');
+const certificate = fs.readFileSync(__dirname + '/ssl/cert.pem', 'utf8');
 
+const app = express();
 
 const PORT = config.get('port') || 8000;
 
@@ -51,26 +56,30 @@ app.use(cookieParser());
 ///////////////////ROUTES
 app.use('/api/register', registerRouter);
 app.use('/api/auth', authRouter);
-app.use('/api/refresh', refreshTokenRouter)
+app.use('/api/refresh', refreshTokenRouter);
 app.use('/api/logout', logoutRouter);
+app.use('/api/cases', casesRouter);
+app.use('/api/verify', verifyRouter);
 
 ///------protected routes
 app.use(verifyJWT);
 
 app.use('/api/settings/', settingsRouter);
 app.use('/api/order/', newOrderRouter);
-app.use('/api/notes/', notesRouter)
+app.use('/api/notes/', notesRouter);
+app.use('/api/chat', chatMessageRouter);
 
 
-// create server for socket.io integretion
+// create server for ws integretion
 const sslCrt = {key: privateKey, cert: certificate}
-const server = https.createServer(sslCrt, app);
-const io = new Server(server)
+const server = http.createServer(app);
 
-io.on('connection', (socket) => {
-    console.log(`socket: ${socket}`)
-    console.log('a user connected')
-} )
+//webSocket server
+
+export const wsServer = new WebSocketServer({server});
+handleChat();
+
+
 //////////////////SATRTING APP
 const mongoConnection  = async () => {
     await mongoose.connect(config.get('mongoUri'));
