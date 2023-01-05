@@ -4,6 +4,7 @@ import fs from 'fs'
 import express from 'express';
 import config from 'config';
 import mongoose from 'mongoose';
+import { Router } from 'express';
 
 import cors from 'cors';
 
@@ -26,9 +27,12 @@ import { WebSocketServer } from 'ws';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { handleChat } from './ws.js';
+import { handleGetAllReviews } from './controllers/reviewController.js';
 import { chatMessageRouter } from './routes/chat.route.js';
 import { casesRouter } from './routes/cases.route.js';
 import { verifyRouter } from './routes/verify.route.js';
+import { uploadRouter } from './routes/upload.route.js';
+import { reviewRouter } from './routes/review.route.js';
 
 const __filename = fileURLToPath(import.meta.url);
 
@@ -60,6 +64,10 @@ app.use('/api/refresh', refreshTokenRouter);
 app.use('/api/logout', logoutRouter);
 app.use('/api/cases', casesRouter);
 app.use('/api/verify', verifyRouter);
+app.use('/api/review', Router().get(
+    '/getall/',
+    handleGetAllReviews
+))
 
 ///------protected routes
 app.use(verifyJWT);
@@ -68,7 +76,8 @@ app.use('/api/settings/', settingsRouter);
 app.use('/api/order/', newOrderRouter);
 app.use('/api/notes/', notesRouter);
 app.use('/api/chat', chatMessageRouter);
-
+app.use('/api/review', reviewRouter);
+app.use('/api/', uploadRouter)
 
 // create server for ws integretion
 const sslCrt = {key: privateKey, cert: certificate}
@@ -82,8 +91,8 @@ handleChat();
 
 //////////////////SATRTING APP
 const mongoConnection  = async () => {
-    await mongoose.connect(config.get('mongoUri'));
-    // console.log(async_hooks.executionAsyncId());
+    config.get('mode') === 'prod' && await mongoose.connect(config.get('mongoUriProd'));
+    config.get('mode') === 'dev' && await mongoose.connect(config.get('mongoUriDev'));
 
     process.on('unhandledRejection', error => {
         console.log('unhandledRejection', error.message);

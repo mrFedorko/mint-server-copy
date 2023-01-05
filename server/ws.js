@@ -17,7 +17,6 @@ export const handleChat = () => {
                         userId = owner
                     }
 
-
                     const msgBody = {text, from, date, like:false}
                     const chat = await Chat.findOne({owner:userId});
         

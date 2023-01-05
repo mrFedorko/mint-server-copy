@@ -22,7 +22,7 @@ export const handleRefreshToken = async (req, res) => {
             const accessToken = jwt.sign(
                 {userId: decoded.userId},
                 config.get('ACCESS_TOKEN_SECRET'),
-                {expiresIn: '15s'}
+                {expiresIn: '40m'}
             );
             res.json({accessToken})
         } 

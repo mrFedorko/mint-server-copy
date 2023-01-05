@@ -1,7 +1,8 @@
 {
     "mode": "dev", 
     "port" : 8000,
-    "mongoUri" : "mongodb://mintApp:password@localhost:27000/mintApp",
+    "mongoUriDev" : "mongodb://mintApp:password@localhost:27000/mintApp",
+    "mongoUriProd" : "mongodb://mintApp:password@localhost:27017/mintApp",
     "server" : {
         "username" : "root",
         "password" : "zQGfr21D",

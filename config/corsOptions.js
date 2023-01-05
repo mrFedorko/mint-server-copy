@@ -6,7 +6,6 @@ export const corsOptions = {
             cb(null, true)
         } else {
             cb(new Error('Not allowed by CORS'));
-            console.log(('not eeeeeeeloud '))
         }
     } ,
     optionsSuccessStatus: 200,
